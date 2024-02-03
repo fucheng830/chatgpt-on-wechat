@@ -25,19 +25,43 @@ from lib import itchat
 from lib.itchat.content import *
 
 
-@itchat.msg_register([TEXT, VOICE, PICTURE, NOTE, ATTACHMENT, SHARING])
+
+
+@itchat.msg_register([TEXT, VOICE, PICTURE, NOTE, ATTACHMENT, SHARING, FRIENDS])
 def handler_single_msg(msg):
     try:
         cmsg = WechatMessage(msg, False)
+        try:
+            if cmsg.ctype == ContextType.ACCEPT_FRIEND or msg.MsgType==37:
+                receiver = cmsg['FromUserName']
+                img_url = 'https://mmbiz.qpic.cn/mmbiz_png/Pf9Gnm8k8FLIPKicIYQicib1w6YcyQ0sicWUG1CGQ93yAafFjKJHVjkXuHbIAJicFI8v7pRJ4ygz2HaVItSBU1WXxLw/640?wx_fmt=png&from=appmsg&tp=wxpic&wxfrom=5&wx_lazy=1&wx_co=1'
+                logger.debug(f"[WX] start download image, img_url={img_url}")
+                pic_res = requests.get(img_url, stream=True)
+                image_storage = io.BytesIO()
+                size = 0
+                for block in pic_res.iter_content(1024):
+                    size += len(block)
+                    image_storage.write(block)
+                logger.info(f"[WX] download image success, size={size}, img_url={img_url}")
+                image_storage.seek(0)
+                itchat.send_image(image_storage, toUserName=receiver)
+                logger.info("[WX] sendImage url={}, receiver={}".format(img_url, receiver))
+        except Exception as e:
+            logger.error("[WX]accept friend error: {}".format(e))
+            return None
+        
+
     except NotImplementedError as e:
         logger.debug("[WX]single message {} skipped: {}".format(msg["MsgId"], e))
         return None
+
     WechatChannel().handle_single(cmsg)
     return None
 
 
-@itchat.msg_register([TEXT, VOICE, PICTURE, NOTE, ATTACHMENT, SHARING], isGroupChat=True)
+@itchat.msg_register([TEXT, VOICE, PICTURE, NOTE, ATTACHMENT, SHARING, FRIENDS], isGroupChat=True)
 def handler_group_msg(msg):
+    print(msg)
     try:
         cmsg = WechatMessage(msg, True)
     except NotImplementedError as e:
@@ -155,6 +179,8 @@ class WechatChannel(ChatChannel):
             logger.debug("[WX]receive patpat msg: {}".format(cmsg.content))
         elif cmsg.ctype == ContextType.TEXT:
             logger.debug("[WX]receive text msg: {}, cmsg={}".format(json.dumps(cmsg._rawmsg, ensure_ascii=False), cmsg))
+        elif cmsg.ctype == ContextType.ACCEPT_FRIEND:
+            logger.debug("[WX]receive text msg: {}")
         else:
             logger.debug("[WX]receive msg: {}, cmsg={}".format(cmsg.content, cmsg))
         context = self._compose_context(cmsg.ctype, cmsg.content, isgroup=False, msg=cmsg)

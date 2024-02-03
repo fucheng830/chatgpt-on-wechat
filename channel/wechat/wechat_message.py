@@ -45,6 +45,10 @@ class WechatMessage(ChatMessage):
             elif "你已添加了" in itchat_msg["Content"]:  #通过好友请求
                 self.ctype = ContextType.ACCEPT_FRIEND
                 self.content = itchat_msg["Content"]
+            elif "刚刚把你添加到通讯录，现在可以开始聊天了。" in itchat_msg["Content"] or "以上是打招呼的内容" in itchat_msg["Content"]:
+                self.ctype = ContextType.ACCEPT_FRIEND
+                self.content = itchat_msg["Content"]
+
             elif "拍了拍我" in itchat_msg["Content"]:
                 self.ctype = ContextType.PATPAT
                 self.content = itchat_msg["Content"]

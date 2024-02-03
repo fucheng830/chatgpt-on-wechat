@@ -181,6 +181,7 @@ class ChatChannel(Channel):
                 {"channel": self, "context": context, "reply": reply},
             )
         )
+        print(context)
         reply = e_context["reply"]
         if not e_context.is_pass():
             logger.debug("[WX] ready to handle context: type={}, content={}".format(context.type, context.content))
@@ -223,6 +224,10 @@ class ChatChannel(Channel):
                 pass
             elif context.type == ContextType.FUNCTION or context.type == ContextType.FILE:  # 文件消息及函数调用等，当前无默认逻辑
                 pass
+            elif context.type == ContextType.ACCEPT_FRIEND:
+                
+                reply.type = ReplyType.TEXT
+                reply.content = conf().get("accept_msg") or "你好，我是机器人，欢迎加我好友。"
             else:
                 logger.warning("[WX] unknown context type: {}".format(context.type))
                 return
