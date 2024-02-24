@@ -39,6 +39,7 @@ def run():
             channel_name = "terminal"
 
         if channel_name == "wxy":
+            # 网页版本协议
             os.environ["WECHATY_LOG"] = "warn"
             # os.environ['WECHATY_PUPPET_SERVICE_ENDPOINT'] = '127.0.0.1:9001'
 

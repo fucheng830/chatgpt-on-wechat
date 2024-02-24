@@ -56,6 +56,7 @@ class OpenAIBot(Bot, OpenAIImage):
                     reply = Reply(ReplyType.INFO, "所有人记忆已清除")
                 else:
                     session = self.sessions.session_query(query, session_id)
+                    print(session)
                     result = self.reply_text(session)
                     total_tokens, completion_tokens, reply_content = (
                         result["total_tokens"],

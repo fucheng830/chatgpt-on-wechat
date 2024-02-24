@@ -181,7 +181,8 @@ class ChatChannel(Channel):
                 {"channel": self, "context": context, "reply": reply},
             )
         )
-        print(context)
+        print('开始回复')
+        print(context.kwargs['msg'])
         reply = e_context["reply"]
         if not e_context.is_pass():
             logger.debug("[WX] ready to handle context: type={}, content={}".format(context.type, context.content))
@@ -221,6 +222,7 @@ class ChatChannel(Channel):
                     "msg": context.get("msg")
                 }
             elif context.type == ContextType.SHARING:  # 分享信息，当前无默认逻辑
+                # 接收分享信息
                 pass
             elif context.type == ContextType.FUNCTION or context.type == ContextType.FILE:  # 文件消息及函数调用等，当前无默认逻辑
                 pass
@@ -231,6 +233,7 @@ class ChatChannel(Channel):
             else:
                 logger.warning("[WX] unknown context type: {}".format(context.type))
                 return
+            
         return reply
 
     def _decorate_reply(self, context: Context, reply: Reply) -> Reply:
