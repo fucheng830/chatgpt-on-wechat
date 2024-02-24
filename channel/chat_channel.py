@@ -223,7 +223,9 @@ class ChatChannel(Channel):
                 }
             elif context.type == ContextType.SHARING:  # 分享信息，当前无默认逻辑
                 # 接收分享信息
-                pass
+                print('分享信息', str(context))
+                context.type = ContextType.TEXT
+                reply = super().build_reply_content(str(context), context)
             elif context.type == ContextType.FUNCTION or context.type == ContextType.FILE:  # 文件消息及函数调用等，当前无默认逻辑
                 pass
             elif context.type == ContextType.ACCEPT_FRIEND:

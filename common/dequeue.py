@@ -1,6 +1,8 @@
 from queue import Full, Queue
 from time import monotonic as time
-
+"""
+此代码实现了一个名为 Dequeue 的类，它继承自 Python 标准库中的 Queue 类并添加了一个新的方法 putleft，从而为这个队列类提供了双端队列（deque）的功能。以下是对代码主要部分的功能逐一解释：
+"""
 
 # add implementation of putleft to Queue
 class Dequeue(Queue):

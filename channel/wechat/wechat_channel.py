@@ -55,7 +55,7 @@ def handler_single_msg(msg):
         #     logger.error("[WX]accept friend error: {}".format(e))
         #     return None
         
-
+        print("处理后的消息",cmsg)
     except NotImplementedError as e:
         logger.debug("[WX]single message {} skipped: {}".format(msg["MsgId"], e))
         return None
